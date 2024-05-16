@@ -2,28 +2,36 @@ package com.yingchenliu.services.skilltree
 
 import com.yingchenliu.services.skilltree.domains.TreeNode
 import com.yingchenliu.services.skilltree.repositories.TreeNodeRepository
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
 
 
 @RestController
 class SkillTreeController(val nodeRepository: TreeNodeRepository) {
 
     @GetMapping("/nodes/root")
-    fun findRoot(): TreeNode {
-        return nodeRepository.findByName("Root")
+    fun findRoot(): TreeNode? {
+        return nodeRepository.findTreeNodeAndNonDeletedChildren("b1747c9f-3818-4edd-b7c6-7384b2cb5e41",)
     }
 
-    @PutMapping("/nodes/{id}")
-    fun updateById(@PathVariable("id") id: Long, @RequestBody node: TreeNode): TreeNode {
-       return nodeRepository.save(node)
+    @PutMapping("/nodes/{uuid}")
+    fun updateById(@PathVariable("uuid") uuid: String, @RequestBody node: TreeNode): TreeNode {
+        return nodeRepository.save(node)
+    }
+
+    @DeleteMapping("/nodes/{uuid}")
+    fun deleteById(@PathVariable("uuid") uuid: String) {
+        val node = nodeRepository.findById(uuid)
+        node.ifPresentOrElse(
+            { nodeRepository.save(it.copy(isDeleted = true)) },
+            { throw ResponseStatusException(HttpStatus.NOT_FOUND, "Error deleting node: Node not found") }
+        );
     }
 
     @GetMapping("/test")
     fun test() {
-        nodeRepository.deleteAll()
-        val java = TreeNode(null, "Java", null, null, emptySet())
-        val js = TreeNode(null, "JavaScript", null, null, emptySet())
-        val root = TreeNode(null, "Root", null, null, setOf(java, js))
-        nodeRepository.saveAll(mutableListOf(java, js, root))
+        val nodes = nodeRepository.findAll()
+        nodeRepository.saveAll(nodes)
     }
 }
