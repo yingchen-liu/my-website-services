@@ -11,8 +11,13 @@ import org.springframework.web.server.ResponseStatusException
 class SkillTreeController(val nodeRepository: TreeNodeRepository) {
 
     @GetMapping("/nodes/root")
-    fun findRoot(): TreeNode? {
-        return nodeRepository.findTreeNodeAndNonDeletedChildren("b1747c9f-3818-4edd-b7c6-7384b2cb5e41",)
+    fun findRootAndChildren(): TreeNode? {
+        return nodeRepository.findTreeNodeAndNonDeletedChildren("b1747c9f-3818-4edd-b7c6-7384b2cb5e41")
+    }
+
+    @GetMapping("/nodes/{uuid}")
+    fun findNodeAndChildren(@PathVariable("uuid") uuid: String): TreeNode? {
+        return nodeRepository.findTreeNodeAndNonDeletedChildren(uuid)
     }
 
     @PutMapping("/nodes/{uuid}")

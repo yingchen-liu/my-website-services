@@ -8,8 +8,11 @@ interface TreeNodeRepository : Neo4jRepository<TreeNode, String> {
     @Query(
         "MATCH path = (startNode:TreeNode)-[:PARENT_OF*]->(endNode:TreeNode) " +
         "WHERE startNode.uuid = \$uuid AND endNode.isDeleted = false " + """
-        AND (endNode.isCollapsed = true OR 
-        NONE(node IN nodes(path) WHERE node.isCollapsed = true))
+        AND (
+            endNode.isCollapsed = true OR 
+            startNode.isCollapsed = true OR 
+            NONE(node IN nodes(path) WHERE node.isCollapsed = true)
+        )
         WITH collect(path) as paths, startNode
         WITH startNode,
         reduce(a=[], node in reduce(b=[], c in [aa in paths | nodes(aa)] | b + c) | case when node in a then a else a + node end) as nodes,
