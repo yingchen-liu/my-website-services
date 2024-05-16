@@ -12,6 +12,7 @@ data class TreeNode(
     val subtitle: String?,
     val content: String?,
     val isDeleted: Boolean = false,
+    val isCollapsed: Boolean = false,
 
     @Relationship(type = "PARENT_OF")
     val children: Set<TreeNode>
