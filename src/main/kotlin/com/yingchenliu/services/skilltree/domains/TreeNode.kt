@@ -17,11 +17,15 @@ data class TreeNode(
     val content: String?,
 
     @Relationship(type = "PARENT_OF")
-    val children: Set<TreeNode>?,
+    val children: List<TreeNode>?,
 
     val isDeleted: Boolean = false,
     val isCollapsed: Boolean = false,
 
     val createdAt: LocalDateTime?,
     val lastUpdatedAt: LocalDateTime?
-)
+) {
+    override fun toString(): String {
+        return "TreeNode(name=$name)"
+    }
+}

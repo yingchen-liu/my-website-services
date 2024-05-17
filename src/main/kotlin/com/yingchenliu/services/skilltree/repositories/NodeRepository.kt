@@ -1,6 +1,8 @@
 package com.yingchenliu.services.skilltree.repositories
 
+import com.yingchenliu.services.skilltree.domains.NodeOrder
 import com.yingchenliu.services.skilltree.domains.TreeNode
+import org.neo4j.driver.Session
 import org.springframework.data.neo4j.repository.Neo4jRepository
 import org.springframework.data.neo4j.repository.query.Query
 import java.util.UUID
