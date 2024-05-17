@@ -1,19 +1,27 @@
 package com.yingchenliu.services.skilltree.domains
 
+import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.neo4j.core.schema.Id
 import org.springframework.data.neo4j.core.schema.Node
 import org.springframework.data.neo4j.core.schema.Relationship
+import java.time.LocalDateTime
+import java.util.*
 
 @Node
 data class TreeNode(
     @Id
-    val uuid: String,
+    val uuid: UUID,
     val name: String,
     val subtitle: String?,
     val content: String?,
+
+    @Relationship(type = "PARENT_OF")
+    val children: Set<TreeNode>?,
+
     val isDeleted: Boolean = false,
     val isCollapsed: Boolean = false,
 
-    @Relationship(type = "PARENT_OF")
-    val children: Set<TreeNode>
+    val createdAt: LocalDateTime?,
+    val lastUpdatedAt: LocalDateTime?
 )

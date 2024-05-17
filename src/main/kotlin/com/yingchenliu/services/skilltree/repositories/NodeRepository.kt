@@ -3,8 +3,9 @@ package com.yingchenliu.services.skilltree.repositories
 import com.yingchenliu.services.skilltree.domains.TreeNode
 import org.springframework.data.neo4j.repository.Neo4jRepository
 import org.springframework.data.neo4j.repository.query.Query
+import java.util.UUID
 
-interface TreeNodeRepository : Neo4jRepository<TreeNode, String> {
+interface NodeRepository : Neo4jRepository<TreeNode, UUID> {
     @Query(
         "MATCH path = (startNode:TreeNode)-[:PARENT_OF*]->(endNode:TreeNode) " +
         "WHERE startNode.uuid = \$uuid AND endNode.isDeleted = false " + """
@@ -20,5 +21,11 @@ interface TreeNodeRepository : Neo4jRepository<TreeNode, String> {
         RETURN startNode, relationships, nodes;
         """
     )
-    fun findTreeNodeAndNonDeletedChildren(uuid: String): TreeNode
+    fun findTreeNodeAndNonDeletedChildren(uuid: UUID): TreeNode
+
+    @Query(
+        "MATCH (parent:TreeNode {uuid: \$parentUuid}), (child:TreeNode {uuid: \$childUuid})" +
+        "CREATE (parent)-[:PARENT_OF]->(child)"
+    )
+    fun createRelationship(parentUuid: UUID, childUuid: UUID)
 }
