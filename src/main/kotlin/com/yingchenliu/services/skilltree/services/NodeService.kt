@@ -59,11 +59,12 @@ class NodeService(
 
     @Transactional("transactionManager")
     fun create(node: TreeNode, parentUUID: UUID): TreeNode {
+        val lastChild = nodeRepository.findLastChild(parentUUID)
         val newNode = node.copy(createdAt = LocalDateTime.now(), lastUpdatedAt = LocalDateTime.now())
         val createdNode = nodeRepository.save(newNode)
         nodeRepository.createParentRelationship(parentUUID, newNode.uuid)
-        nodeRepository.findLastChild(parentUUID)?.let {
-            nodeRepository.createAfterRelationship(createdNode.uuid, parentUUID)
+        lastChild?.let {
+            nodeRepository.createAfterRelationship(createdNode.uuid, it.uuid)
         }
         return createdNode;
     }

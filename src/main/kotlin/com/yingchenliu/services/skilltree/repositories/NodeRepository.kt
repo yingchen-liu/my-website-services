@@ -143,14 +143,14 @@ interface NodeRepository : Neo4jRepository<TreeNode, UUID> {
      * The last child is defined as the node that does not have any outgoing "BEFORE" relationships
      * with other children of the same parent node.
      *
-     * @param parentUuid the UUID of the parent TreeNode
+     * @param parentUUID the UUID of the parent TreeNode
      * @return the last child TreeNode or null if no such child exists
      */
     @Query(
-        "MATCH (n:TreeNode) " +
-                "WHERE (p:TreeNode {uuid: \$parentUuid})-[:PARENT_OF]->(n) AND NOT (n)-[:BEFORE]-() OR (()-[:BEFORE]->(n) AND NOT (n)-[:BEFORE]->()) " +
+        "MATCH (p:TreeNode {uuid: \$parentUUID})-[:PARENT_OF]->(n:TreeNode) " +
+                "WHERE NOT (n)-[:BEFORE]-() OR (()-[:BEFORE]->(n) AND NOT (n)-[:BEFORE]->()) " +
                 "RETURN n " +
                 "LIMIT 1"
     )
-    fun findLastChild(parentUuid: UUID): TreeNode?
+    fun findLastChild(parentUUID: UUID): TreeNode?
 }
