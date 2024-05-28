@@ -1,5 +1,6 @@
 package com.yingchenliu.services.skilltree.controllers
 
+import com.yingchenliu.services.skilltree.domains.NodePositionDTO
 import com.yingchenliu.services.skilltree.domains.TreeNode
 import com.yingchenliu.services.skilltree.services.NodeService
 import org.springframework.http.HttpStatus
@@ -33,7 +34,7 @@ class SkillTreeController(val nodeService: NodeService) {
     }
 
     @PutMapping("/nodes/{uuid}")
-    fun updateNodeById(@PathVariable("uuid") uuid: String, @RequestBody node: TreeNode): TreeNode {
+    fun updateNode(@PathVariable("uuid") uuid: String, @RequestBody node: TreeNode): TreeNode {
         val existingNode = nodeService.findById(UUID.fromString(uuid))
 
         return if (existingNode.isPresent) {
@@ -42,6 +43,25 @@ class SkillTreeController(val nodeService: NodeService) {
         } else {
             throw ResponseStatusException(HttpStatus.NOT_FOUND, "Error updating node: Node not found")
         }
+    }
+
+    @PutMapping("/nodes/{uuid}/position")
+    fun updateNodeParent(@PathVariable("uuid") uuid: String, @RequestBody positionDTO: NodePositionDTO): TreeNode {
+        val node = nodeService.findById(UUID.fromString(uuid))
+        val parentNode = nodeService.findById(UUID.fromString(positionDTO.parentUUID))
+
+        if (!node.isPresent || !parentNode.isPresent) {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Error updating node's position: Node not found")
+        }
+        positionDTO.order?.let {
+            val relatedToNode = nodeService.findById(UUID.fromString(it.relatedToUUID))
+            if (!relatedToNode.isPresent) {
+                throw ResponseStatusException(HttpStatus.NOT_FOUND, "Error updating node's position: Node not found")
+            }
+        }
+
+        nodeService.changeNodePosition(node.get().uuid, positionDTO)
+        return nodeService.findFromNode(parentNode.get().uuid)
     }
 
     @DeleteMapping("/nodes/{uuid}")

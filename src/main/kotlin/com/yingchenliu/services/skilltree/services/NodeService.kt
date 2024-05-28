@@ -1,8 +1,6 @@
 package com.yingchenliu.services.skilltree.services
 
-import com.sun.source.tree.Tree
-import com.yingchenliu.services.skilltree.domains.NodeOrder
-import com.yingchenliu.services.skilltree.domains.TreeNode
+import com.yingchenliu.services.skilltree.domains.*
 import com.yingchenliu.services.skilltree.repositories.NodeOrderRepository
 import com.yingchenliu.services.skilltree.repositories.NodeRepository
 import org.springframework.beans.factory.annotation.Qualifier
@@ -60,16 +58,37 @@ class NodeService(
     }
 
     @Transactional("transactionManager")
-    fun create(node: TreeNode, parentUuid: UUID): TreeNode {
+    fun create(node: TreeNode, parentUUID: UUID): TreeNode {
         val newNode = node.copy(createdAt = LocalDateTime.now(), lastUpdatedAt = LocalDateTime.now())
         val createdNode = nodeRepository.save(newNode)
-        nodeRepository.createRelationship(parentUuid, newNode.uuid)
+        nodeRepository.createParentRelationship(parentUUID, newNode.uuid)
+        nodeRepository.findLastChild(parentUUID)?.let {
+            nodeRepository.createAfterRelationship(createdNode.uuid, parentUUID)
+        }
         return createdNode;
     }
 
     fun update(node: TreeNode): TreeNode {
         val newNode = node.copy(lastUpdatedAt = LocalDateTime.now())
         return nodeRepository.save(newNode)
+    }
+
+    @Transactional("transactionManager")
+    fun changeNodePosition(uuid: UUID, nodePositionDTO: NodePositionDTO) {
+        nodeRepository.removeBeforeRelationship(uuid)
+        nodeRepository.removeParentRelationship(uuid)
+        nodeRepository.createParentRelationship(UUID.fromString(nodePositionDTO.parentUUID), uuid)
+        nodePositionDTO.order?.let {
+            val orderRelatedToUuid = UUID.fromString(it.relatedToUUID)
+            when (it.position) {
+                NodeOrderPosition.BEFORE -> nodeRepository.createBeforeRelationship(uuid, orderRelatedToUuid)
+                NodeOrderPosition.AFTER -> nodeRepository.createAfterRelationship(uuid, orderRelatedToUuid)
+            }
+        } ?: {
+            nodeRepository.findLastChild(UUID.fromString(nodePositionDTO.parentUUID))?.let {
+                nodeRepository.createAfterRelationship(uuid, it.uuid)
+            }
+        }
     }
 
     fun delete(node: TreeNode): TreeNode {
