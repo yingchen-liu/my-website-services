@@ -22,12 +22,23 @@ class SkillTreeController(val nodeService: NodeService) {
         return nodeService.findFromNode(UUID.fromString(uuid))
     }
 
-    @PostMapping("/nodes/{parentUuid}")
-    fun createNode(@PathVariable("parentUuid") parentUuid: String, @RequestBody node: TreeNode): TreeNode {
-        val parentNode = nodeService.findById(UUID.fromString(parentUuid))
+    @PostMapping("/nodes/{parentUUID}")
+    fun createChildNode(@PathVariable("parentUUID") parentUUID: String, @RequestBody node: TreeNode): TreeNode {
+        val parentNode = nodeService.findById(UUID.fromString(parentUUID))
 
         return if (parentNode.isPresent) {
-            nodeService.create(node, UUID.fromString(parentUuid))
+            nodeService.createChild(node, parentNode.get().uuid)
+        } else {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Error creating node: Parent node not found")
+        }
+    }
+
+    @PostMapping("/nodes/{previousNodeUUID}/after")
+    fun createNodeAfter(@PathVariable("previousNodeUUID") previousNodeUUID: String, @RequestBody node: TreeNode): TreeNode {
+        val previousNode = nodeService.findById(UUID.fromString(previousNodeUUID))
+
+        return if (previousNode.isPresent) {
+            nodeService.createAfter(node, previousNode.get().uuid)
         } else {
             throw ResponseStatusException(HttpStatus.NOT_FOUND, "Error creating node: Parent node not found")
         }

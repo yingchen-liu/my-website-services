@@ -38,20 +38,26 @@ interface NodeRepository : Neo4jRepository<TreeNode, UUID> {
     )
     fun findTreeNodeAndNonDeletedChildren(uuid: UUID): TreeNode
 
+    @Query(
+        "MATCH (p:TreeNode)-[:PARENT_OF]->(c:TreeNode) WHERE c.uuid = \$childUUID " +
+                "RETURN p LIMIT 1"
+    )
+    fun findParentNode(childUUID: UUID): TreeNode
+
     /**
      * Creates a parent-child relationship between two TreeNodes with the specified UUIDs.
      *
      * This operation establishes a "PARENT_OF" relationship between the TreeNode represented by parentUuid
      * and the TreeNode represented by childUuid.
      *
-     * @param parentUuid the UUID of the parent TreeNode
-     * @param childUuid the UUID of the child TreeNode
+     * @param parentUUID the UUID of the parent TreeNode
+     * @param childUUID the UUID of the child TreeNode
      */
     @Query(
-        "MATCH (parent:TreeNode {uuid: \$parentUuid}), (child:TreeNode {uuid: \$childUuid}) " +
+        "MATCH (parent:TreeNode {uuid: \$parentUUID}), (child:TreeNode {uuid: \$childUUID}) " +
                 "CREATE (parent)-[:PARENT_OF]->(child)"
     )
-    fun createParentRelationship(parentUuid: UUID, childUuid: UUID)
+    fun createParentRelationship(parentUUID: UUID, childUUID: UUID)
 
     /**
      * Removes the "before" relationship of the TreeNode with the given UUID among its neighboring nodes.
