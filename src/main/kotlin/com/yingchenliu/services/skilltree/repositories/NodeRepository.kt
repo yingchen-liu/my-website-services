@@ -28,7 +28,8 @@ interface NodeRepository : Neo4jRepository<TreeNode, UUID> {
             endNode.isCollapsed = true OR 
             startNode.isCollapsed = true OR 
             NONE(node IN nodes(path) WHERE node.isCollapsed = true)
-        )
+        ) 
+        AND all(node in nodes(path) WHERE node = startNode OR node = endNode OR (NOT node.isCollapsed))
         WITH collect(path) as paths, startNode
         WITH startNode,
         reduce(a=[], node in reduce(b=[], c in [aa in paths | nodes(aa)] | b + c) | case when node in a then a else a + node end) as nodes,
