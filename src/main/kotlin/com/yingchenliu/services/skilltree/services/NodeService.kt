@@ -18,8 +18,6 @@ class NodeService(
 ) {
     fun findFromNode(uuid: UUID): TreeNode {
         val orders = nodeOrderRepository.findTreeNodeNonDeletedChildrenOrder(uuid)
-        println("orders")
-        println(orders)
         val node = nodeRepository.findTreeNodeAndNonDeletedChildren(uuid)
         return sortChildrenAtCurrentLevel(node, orders)
     }
@@ -33,17 +31,10 @@ class NodeService(
 
             val relationships =
                 orderForThisLevel.associate { it.previousNodeUuid.toString() to listOf(it.nextNodeUuid.toString()) }
-            println(TopologicalSort(relationships).topologicalSort())
             val sortedOrderedNodes = TopologicalSort(relationships).topologicalSort()
                 .mapNotNull { uuid -> nodesByUuid[UUID.fromString(uuid)] }.toList()
 
-            println("sortedOrderedNodes")
-            println(sortedOrderedNodes)
-
             val unorderedNodes = children.filter { node -> !sortedOrderedNodes.contains(node) }.toList()
-
-            println("unorderedNodes")
-            println(unorderedNodes)
 
             return node.copy(children = (sortedOrderedNodes + unorderedNodes).map { node -> sortChildrenAtCurrentLevel(node, orders) })
         } ?: node
@@ -73,9 +64,7 @@ class NodeService(
     fun createAfter(node: TreeNode, previousNodeUUID: UUID): TreeNode {
         val newNode = node.copy(createdAt = LocalDateTime.now(), lastUpdatedAt = LocalDateTime.now())
         val createdNode = nodeRepository.save(newNode)
-        println("previousNodeUUID" + previousNodeUUID)
         val parentNode = nodeRepository.findParentNode(previousNodeUUID)
-        println("parentNode" + parentNode)
         nodeRepository.createParentRelationship(parentNode.uuid, newNode.uuid)
         nodeRepository.createAfterRelationship(createdNode.uuid, previousNodeUUID)
         return createdNode;
