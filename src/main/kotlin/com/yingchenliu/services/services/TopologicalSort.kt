@@ -1,4 +1,4 @@
-package com.yingchenliu.services.skilltree.services
+package com.yingchenliu.services.services
 
 class TopologicalSort(private val graph: Map<String, List<String>>) {
 

@@ -1,6 +1,6 @@
-package com.yingchenliu.services.skilltree.repositories
+package com.yingchenliu.services.repositories
 
-import com.yingchenliu.services.skilltree.domains.NodeOrder
+import com.yingchenliu.services.domains.NodeOrder
 import org.neo4j.driver.Driver
 import org.neo4j.driver.Session
 import org.springframework.stereotype.Repository

@@ -1,11 +1,10 @@
-package com.yingchenliu.services.skilltree
+package com.yingchenliu.services
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.data.neo4j.config.EnableNeo4jAuditing
 import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories
 import org.springframework.transaction.annotation.EnableTransactionManagement
 import org.springframework.web.servlet.config.annotation.CorsRegistry
@@ -14,10 +13,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 @SpringBootApplication
 @EnableNeo4jRepositories
 @EnableTransactionManagement
-class SkillTreeApplication
+class MyWebsiteApplication
 
 fun main(args: Array<String>) {
-	runApplication<SkillTreeApplication>(*args)
+	runApplication<MyWebsiteApplication>(*args)
 }
 
 @Configuration

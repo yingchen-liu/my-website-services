@@ -1,4 +1,4 @@
-package com.yingchenliu.services.skilltree.domains
+package com.yingchenliu.services.domains
 
 import org.springframework.data.neo4j.core.schema.Node
 import java.util.*

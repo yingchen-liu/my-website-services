@@ -1,4 +1,4 @@
-package com.yingchenliu.services.skilltree.domains
+package com.yingchenliu.services.domains
 
 enum class NodeOrderPosition {
     BEFORE,

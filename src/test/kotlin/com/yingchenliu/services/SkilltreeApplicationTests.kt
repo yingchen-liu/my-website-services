@@ -1,4 +1,4 @@
-package com.yingchenliu.services.skilltree
+package com.yingchenliu.services
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest

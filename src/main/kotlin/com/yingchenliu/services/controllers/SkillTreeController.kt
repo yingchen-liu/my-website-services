@@ -1,8 +1,8 @@
-package com.yingchenliu.services.skilltree.controllers
+package com.yingchenliu.services.controllers
 
-import com.yingchenliu.services.skilltree.domains.NodePositionDTO
-import com.yingchenliu.services.skilltree.domains.TreeNode
-import com.yingchenliu.services.skilltree.services.NodeService
+import com.yingchenliu.services.domains.NodePositionDTO
+import com.yingchenliu.services.domains.TreeNode
+import com.yingchenliu.services.services.NodeService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
