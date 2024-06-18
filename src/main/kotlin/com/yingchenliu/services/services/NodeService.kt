@@ -4,7 +4,6 @@ import com.yingchenliu.services.domains.NodeOrder
 import com.yingchenliu.services.domains.NodeOrderPosition
 import com.yingchenliu.services.domains.NodePositionDTO
 import com.yingchenliu.services.domains.TreeNode
-import com.yingchenliu.services.skilltree.domains.*
 import com.yingchenliu.services.repositories.NodeOrderRepository
 import com.yingchenliu.services.repositories.NodeRepository
 import org.springframework.beans.factory.annotation.Qualifier

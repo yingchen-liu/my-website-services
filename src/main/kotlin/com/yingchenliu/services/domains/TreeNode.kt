@@ -21,6 +21,7 @@ data class TreeNode(
 
     val isDeleted: Boolean = false,
     val isCollapsed: Boolean = false,
+    val isRelationship: Boolean = false,
 
     val createdAt: LocalDateTime?,
     val lastUpdatedAt: LocalDateTime?
